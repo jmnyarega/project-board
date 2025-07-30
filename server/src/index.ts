@@ -10,6 +10,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { useServer } from "graphql-ws/lib/use/ws";
 import { WebSocketServer } from "ws";
 import resolvers from "./resolvers";
+import { BoarddataSource } from "./datasource";
 
 const typeDefs = readFileSync("./schema.graphql", { encoding: "utf-8" });
 
@@ -21,6 +22,7 @@ const corsOptions = {
 };
 
 export interface BoardContext { }
+const boardsAPI = new BoarddataSource();
 
 async function startServer() {
   const app = express();
@@ -39,11 +41,11 @@ async function startServer() {
   useServer(
     {
       schema,
-      context: async (ctx) => {
+      context: async (_) => {
         return {
           user,
           dataSources: {
-            boards: {},
+            boardsAPI: boardsAPI
           },
         };
       },
