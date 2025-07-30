@@ -9,6 +9,7 @@ import {expressMiddleware} from "@apollo/server/express4";
 
 import {useServer} from "graphql-ws/lib/use/ws";
 import {WebSocketServer} from "ws";
+import resolvers from "./resolvers";
 
 const typeDefs = readFileSync("./schema.graphql", {encoding: "utf-8"});
 
@@ -21,73 +22,6 @@ const corsOptions = {
 
 export interface BoardContext {}
 
-const user = {
-  name: "josiah"
-}
-
-const cards = [
-  {
-    name: "one",
-    content: "This is a content",
-    position: 0,
-  },
-  {
-    name: "two",
-    content: "This is a content",
-    position: 1,
-  },
-  {
-    name: "two",
-    content: "This is a content",
-    position: 2,
-  }
-]
-
-const columns = [
-  {
-    name: "one",
-    position: 0,
-    cards: [
-      cards[1],
-      cards[2]
-    ]
-  },
-  {
-    name: "two",
-    position: 1,
-    cards: [
-      cards[0],
-    ]
-  }
-]
-
-const boards = [
-  {
-    title: 'The Awakening',
-    user,
-    columns: [
-      columns[0]
-    ]
-  },
-  {
-    title: 'City of Glass',
-    user,
-    columns: [
-      columns[1]
-    ]
-  },
-];
-
-// Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves books from the "books" array above.
-const resolvers = {
-  Query: {
-    board: () => boards,
-    column: () => columns,
-    card: () => cards,
-  },
-};
-
 async function startServer() {
   const app = express();
   const httpServer = http.createServer(app);
@@ -99,6 +33,8 @@ async function startServer() {
     path: "/graphql",
   });
 
+  const user = {};
+
   // Enable subscriptions
   useServer(
     {
@@ -107,7 +43,7 @@ async function startServer() {
         return {
           user,
           dataSources: {
-            boards: boards,
+            boards: {},
           },
         };
       },
@@ -117,13 +53,12 @@ async function startServer() {
   const server = new ApolloServer<BoardContext>({schema});
   await server.start();
   app.use(cors(corsOptions));
-  app.options("*", cors(corsOptions)); // This handles preflight requests
 
   app.use(
     "/graphql",
     express.json(),
     expressMiddleware(server, {
-      context: async ({req}) => ({boards}),
+      context: async ({req}) => ({}),
     })
   );
   await new Promise<void>((resolve) => httpServer.listen({ port: 3000 }, resolve));
