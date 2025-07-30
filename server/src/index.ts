@@ -1,17 +1,17 @@
-import {readFileSync} from "fs";
+import { readFileSync } from "fs";
 import express from "express";
 import http from "http";
 import cors from "cors";
 
-import {ApolloServer} from '@apollo/server';
-import {makeExecutableSchema} from "@graphql-tools/schema";
-import {expressMiddleware} from "@apollo/server/express4";
+import { ApolloServer } from '@apollo/server';
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { expressMiddleware } from "@apollo/server/express4";
 
-import {useServer} from "graphql-ws/lib/use/ws";
-import {WebSocketServer} from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
+import { WebSocketServer } from "ws";
 import resolvers from "./resolvers";
 
-const typeDefs = readFileSync("./schema.graphql", {encoding: "utf-8"});
+const typeDefs = readFileSync("./schema.graphql", { encoding: "utf-8" });
 
 const corsOptions = {
   origin: "http://localhost:5173", // Frontend origin
@@ -20,12 +20,12 @@ const corsOptions = {
   credentials: true,
 };
 
-export interface BoardContext {}
+export interface BoardContext { }
 
 async function startServer() {
   const app = express();
   const httpServer = http.createServer(app);
-  const schema = makeExecutableSchema({typeDefs, resolvers});
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
 
   // WebSocket server
   const wsServer = new WebSocketServer({
@@ -50,7 +50,7 @@ async function startServer() {
     },
     wsServer
   );
-  const server = new ApolloServer<BoardContext>({schema});
+  const server = new ApolloServer<BoardContext>({ schema });
   await server.start();
   app.use(cors(corsOptions));
 
@@ -58,7 +58,7 @@ async function startServer() {
     "/graphql",
     express.json(),
     expressMiddleware(server, {
-      context: async ({req}) => ({}),
+      context: async ({ req }) => ({}),
     })
   );
   await new Promise<void>((resolve) => httpServer.listen({ port: 3000 }, resolve));

@@ -54,8 +54,9 @@ const boards = [
   },
 ];
 
-export default () => ({
+const query = {
   board: () => boards,
   column: () => columns,
   card: () => cards,
-})
+};
+export default query;

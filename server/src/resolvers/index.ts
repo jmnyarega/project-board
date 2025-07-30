@@ -4,7 +4,7 @@ import {subscription} from "./subscription";
 
 const resolvers = {
   Subscription: subscription,
-  Query: query(),
+  Query: query,
   Mutation: mutation
 }
 
