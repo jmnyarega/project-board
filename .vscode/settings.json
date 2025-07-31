@@ -1,0 +1,17 @@
+{
+    "editor.fontSize": 21,
+    "editor.fontFamily": "Mononoki",
+    "editor.wordWrap": "on",
+    "workbench.colorTheme": "Solarized Dark",
+    "editor.mouseWheelZoom": true,
+    "editor.formatOnPaste": true,
+    "editor.columnSelection": false,
+    "editor.definitionLinkOpensInPeek": true,
+    "editor.experimental.preferTreeSitter.ini": true,
+    "editor.experimentalGpuAcceleration": "off",
+    "editor.foldingImportsByDefault": true,
+    "editor.inlayHints.fontSize": 21,
+    "editor.inlayHints.padding": true,
+    "editor.inlineCompletionsAccessibilityVerbose": true,
+    "editor.linkedEditing": true
+}

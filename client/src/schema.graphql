@@ -1,0 +1,41 @@
+type User {
+  name: String
+}
+
+type Card {
+  name: String
+  content: String
+  position: Int
+}
+
+type Message {
+  message: String
+}
+
+type Column {
+  name: String
+  position: Int
+  cards: [Card]
+}
+
+type Board {
+  title: String
+  user: User
+  columns: [Column]
+}
+
+type Mutation {
+  createBoard(title: String!): Board
+  updateBoard(id: ID!, title: String!): Board
+  deleteBoard(id: ID!): Message
+}
+
+type Query {
+    board: [Board]
+    column: [Column]
+    card: [Card]
+}
+
+type Subscription {
+    cardUpdated(boardId: ID!): Board!
+}

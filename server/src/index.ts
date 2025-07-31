@@ -15,7 +15,7 @@ import { BoarddataSource } from "./datasource";
 const typeDefs = readFileSync("./schema.graphql", { encoding: "utf-8" });
 
 const corsOptions = {
-  origin: "http://localhost:5173", // Frontend origin
+  origin: "http://localhost:3000", // Frontend origin
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -63,7 +63,7 @@ async function startServer() {
       context: async ({ req }) => ({}),
     })
   );
-  await new Promise<void>((resolve) => httpServer.listen({ port: 3000 }, resolve));
+  await new Promise<void>((resolve) => httpServer.listen({ port: 4000 }, resolve));
   console.log(`🚀 Server ready at http://localhost:3000/graphql`);
 }
 startServer();
