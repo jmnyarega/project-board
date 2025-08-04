@@ -1,9 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import './App.css';
 import reportWebVitals from './reportWebVitals';
 import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
+import { BrowserRouter, Route, Routes } from 'react-router';
+import Home from './pages/home';
+import Board from './pages/board';
+import Layout from './pages/layout';
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql'
@@ -20,7 +24,15 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route path="/board/:id" element={<Board />} />
+            <Route index element={<Home />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+
     </ApolloProvider>
   </React.StrictMode>
 );
