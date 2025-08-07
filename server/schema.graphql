@@ -28,7 +28,9 @@ type Board {
 }
 
 type Mutation {
+  createCard(name: String, position: String, column: String, content: String): Message
   createBoard(title: String!): Board
+  moveCard(id: String, position: String): Message
   updateBoard(id: ID!, title: String!): Board
   deleteBoard(id: ID!): Message
 }
@@ -41,5 +43,6 @@ type Query {
 }
 
 type Subscription {
-    cardUpdated(boardId: ID!): Board!
+    moveCards(cardIds: String): Message
+    createCard: Card
 }

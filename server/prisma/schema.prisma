@@ -7,7 +7,6 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
-  output          = "../src/generated/prisma"
 }
 
 datasource db {
@@ -24,6 +23,7 @@ model User {
 model Card {
   id       String @id @default(uuid())
   name     String @unique
+  content  String
   columnId String
   Column   Column @relation(fields: [columnId], references: [id])
   position String

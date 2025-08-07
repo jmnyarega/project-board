@@ -1,9 +1,11 @@
+import { subscribe } from "diagnostics_channel";
 import { pubsub } from "../pubsub";
 
 export const subscription = {
-  cardUpdated: {
-    subscribe: (_: any, { boardId }: { boardId: string }) => {
-      return pubsub.asyncIterator(`CARD-MOVED-ON-BOARD-${boardId}`);
-    },
+  moveCards: {
+    subscribe: () => pubsub.asyncIterator(["CARDS_MOVED"]),
   },
+  createCard: {
+    subscribe: () => pubsub.asyncIterator(["CARD_CREATED"])
+  }
 };
