@@ -46,4 +46,5 @@ type Query {
 type Subscription {
     moveCards(cardIds: String): Message
     createCard: Card
+    deleteCard: Message
 }
