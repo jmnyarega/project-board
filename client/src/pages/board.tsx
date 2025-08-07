@@ -22,7 +22,15 @@ const CREATE_CARD_SUBSCRIPTION = gql`
   }
 `;
 
-const BOARD = gql(`
+const DELETE_CARD_SUBSCRIPTION = gql`
+  subscription deleteCard($id: String) {
+    deleteCard(id: $id ) {
+      __typename
+    }
+  }
+`;
+
+const BOARD = gql`
 query getBoard($id: String) {
   board(id: $id)  {
     id
@@ -39,8 +47,7 @@ query getBoard($id: String) {
       }
     }
   }
-}`
-);
+}`;
 
 const CREATE_CARD = gql`
   mutation createCard($name: String, $position: String, $columnId: String, $content: String) {
@@ -52,7 +59,7 @@ const CREATE_CARD = gql`
 
 const DELETE_CARD = gql`
   mutation deleteCard($id: String) {
-    deleteCard(cardId: $id) {
+    deleteCard(id: $id) {
       __typename
     }
   }
@@ -98,6 +105,7 @@ const BoardPage = () => {
   const { data: boards, refetch: fetchBoards } = useQuery(BOARD, {
     variables: { id }
   });
+
   const [moveCard, { data: cards }] = useMutation(MOVE_CARD);
 
   const [deleteCard, { data: deleteCards }] = useMutation(DELETE_CARD);
@@ -105,7 +113,10 @@ const BoardPage = () => {
   const [addCard, { data: newCard }] = useMutation(CREATE_CARD);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      // @ts-ignore
+      activationConstraint: { delay: 100 }
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -131,9 +142,26 @@ const BoardPage = () => {
     }
   });
 
+  useSubscription(DELETE_CARD_SUBSCRIPTION, {
+    onSubscriptionData(options) {
+      console.log("Listening", options)
+    },
+    onSubscriptionComplete() {
+      console.log("Complete");
+      fetchBoards();
+    }
+  });
+
   useEffect(() => { boards && setBoard(boards.board) }, [boards])
   useEffect(() => { cards && fetchBoards() }, [cards])
   useEffect(() => { fetchBoards() }, [])
+
+  const deleteCardHandler = (event: React.MouseEvent, id: string) => {
+    event.preventDefault();
+
+    console.log(id);
+    deleteCard({ variables: { id } })
+  }
 
   return (
     <div className="boards">
@@ -163,7 +191,7 @@ const BoardPage = () => {
                       <li className='cards'>
                         <h3>{card.name}</h3>
                         <div>{card.content}</div>
-                        <button onClick={() => deleteCard({ variables: { id: card.id } })}>
+                        <button onClick={(event) => deleteCardHandler(event, card.id)}>
                           Delete
                         </button>
                       </li>
@@ -171,20 +199,23 @@ const BoardPage = () => {
                   )}
                 </SortableContext>
               </DndContext>
-              <button onClick={() => addCard({
-                variables: {
-                  name: "This is awkward",
-                  columnId: column.id,
-                  content: "This content test"
+              <button onClick={() => addCard(
+                {
+                  variables: {
+                    name: "This is awkward",
+                    columnId: column.id,
+                    content: "This content test"
+                  }
                 }
-              })}>Add Card</button>
+              )}>
+                Add Card
+              </button>
             </ul>
           </li>
         )}
       </ul>
     </div >
   );
-
 
   function handleDragEnd(event: DragEndEvent) {
     if (event.over) {

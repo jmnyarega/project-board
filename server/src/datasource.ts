@@ -65,12 +65,8 @@ export class BoarddataSource {
     async createColumn() { }
     async updateColumn() { }
     async updateBoard() { }
-    async deleteCard(args: { id: string }) {
-        const card = await prisma.card.delete({
-            where: {
-                id: args.id
-            }
-        });
+    async deleteCard({ id }: { id: string }) {
+        const card = await prisma.card.delete({ where: { id } });
         pubsub.publish('CARD_DELETED', { card });
     }
     async moveCard(args: { id: string, position: string }) {

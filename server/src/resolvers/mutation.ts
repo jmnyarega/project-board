@@ -12,9 +12,9 @@ export type CreateCard = {
 
 const mutation = {
   updateBoard: async (_, cardId: number) => { },
-  moveCard: (_, args: { id: string, position: string }) => datasource.moveCard(args),
-  createCard: (_, args: CreateCard) => datasource.createCard(args),
-  deleteCard: (_, args: { id: string }) => datasource.deleteCard(args)
+  moveCard: async (_, args: { id: string, position: string }) => await datasource.moveCard(args),
+  createCard: async (_, args: CreateCard) => await datasource.createCard(args),
+  deleteCard: async (_, args: { id: string }) => await datasource.deleteCard(args)
 }
 
 export default mutation;
