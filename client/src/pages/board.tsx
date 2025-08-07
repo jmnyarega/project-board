@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery, gql, useMutation, useSubscription } from "@apollo/client"
-import { useFetcher, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './sortable-item';
@@ -43,8 +43,16 @@ query getBoard($id: String) {
 );
 
 const CREATE_CARD = gql`
-  mutation createCard($name: String, $position: String, $column: String, $content: String) {
-    createCard(name: $name, position: $position, column: $column, content: $content) {
+  mutation createCard($name: String, $position: String, $columnId: String, $content: String) {
+    createCard(name: $name, position: $position, columnId: $columnId, content: $content) {
+      __typename
+    }
+  }
+`;
+
+const DELETE_CARD = gql`
+  mutation deleteCard($id: String) {
+    deleteCard(cardId: $id) {
       __typename
     }
   }
@@ -92,6 +100,8 @@ const BoardPage = () => {
   });
   const [moveCard, { data: cards }] = useMutation(MOVE_CARD);
 
+  const [deleteCard, { data: deleteCards }] = useMutation(DELETE_CARD);
+
   const [addCard, { data: newCard }] = useMutation(CREATE_CARD);
 
   const sensors = useSensors(
@@ -106,7 +116,8 @@ const BoardPage = () => {
       console.log("Listening", options)
     },
     onSubscriptionComplete() {
-      console.log("Complete")
+      console.log("Complete");
+      fetchBoards();
     }
   });
 
@@ -115,7 +126,8 @@ const BoardPage = () => {
       console.log("Listening", options)
     },
     onSubscriptionComplete() {
-      console.log("Complete")
+      console.log("Complete");
+      fetchBoards();
     }
   });
 
@@ -151,6 +163,9 @@ const BoardPage = () => {
                       <li className='cards'>
                         <h3>{card.name}</h3>
                         <div>{card.content}</div>
+                        <button onClick={() => deleteCard({ variables: { id: card.id } })}>
+                          Delete
+                        </button>
                       </li>
                     </SortableItem>
                   )}
@@ -158,9 +173,8 @@ const BoardPage = () => {
               </DndContext>
               <button onClick={() => addCard({
                 variables: {
-                  name: "Dis is two...s",
-                  position: "10",
-                  column: column.id,
+                  name: "This is awkward",
+                  columnId: column.id,
                   content: "This content test"
                 }
               })}>Add Card</button>

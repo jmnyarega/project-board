@@ -47,17 +47,32 @@ export class BoarddataSource {
     async getUser() { }
     async createBoard() { }
     async createCard(args: CreateCard) {
-        const { name, position, column: columnId, content } = args;
+        const position = await prisma.card.aggregate({
+            where: { columnId: args.columnId },
+            _count: { position: true }
+        });
+
         const card = await prisma.card.create({
             data: {
-                name, position, columnId, id: crypto.randomUUID(), content
+                ...args,
+                position: position._count.position.toString(),
+                id: crypto.randomUUID(),
             }
         });
         pubsub.publish('CARD_CREATED', { cardsMoved: card });
+        return card;
     }
     async createColumn() { }
     async updateColumn() { }
     async updateBoard() { }
+    async deleteCard(args: { id: string }) {
+        const card = await prisma.card.delete({
+            where: {
+                id: args.id
+            }
+        });
+        pubsub.publish('CARD_DELETED', { card });
+    }
     async moveCard(args: { id: string, position: string }) {
         const { id, position } = args;
         const [oldId, newId] = id.split(":");
