@@ -55,7 +55,7 @@ export class BoarddataSource {
         const card = await prisma.card.create({
             data: {
                 ...args,
-                position: position._count.position.toString(),
+                position: (position._count.position + 1).toString(),
                 id: crypto.randomUUID(),
             }
         });
