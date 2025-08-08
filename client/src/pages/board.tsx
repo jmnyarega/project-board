@@ -117,18 +117,18 @@ const BoardPage = () => {
   );
 
   useSubscription(MOVE_CARD_SUBSCRIPTION, {
-    onSubscriptionData(options) { console.log("Listening", options) },
-    onSubscriptionComplete() { fetchBoards() }
+    onSubscriptionData(_) { fetchBoards() },
+    onSubscriptionComplete() { console.info("MOVE_CARD_SUBSCRIPTION_COMPLETE") }
   });
 
   useSubscription(CREATE_CARD_SUBSCRIPTION, {
-    onSubscriptionData(options) { console.log("Listening", options) },
-    onSubscriptionComplete() { fetchBoards() }
+    onSubscriptionData(_) { fetchBoards() },
+    onSubscriptionComplete() { console.info("CREATE_CARD_SUBSCRIPTION_COMPLETE") }
   });
 
   useSubscription(DELETE_CARD_SUBSCRIPTION, {
-    onSubscriptionData(options) { console.log("Listening", options) },
-    onSubscriptionComplete() { fetchBoards() }
+    onSubscriptionData(_) { fetchBoards() },
+    onSubscriptionComplete() { console.info("DELETE_CARD_SUBSCRIPTION_COMPLETE") }
   });
 
   useEffect(() => { boards && setBoard(boards.board) }, [boards])
