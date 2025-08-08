@@ -10,5 +10,8 @@ export const subscription = {
   },
   deleteCard: {
     subscribe: () => pubsub.asyncIterator(["CARD_DELETED"])
+  },
+  editCard: {
+    subscribe: () => pubsub.asyncIterator(["CARD_EDITED"])
   }
 };

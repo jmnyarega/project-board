@@ -52,3 +52,27 @@ body {
   gap: 1.5rem;
   border: 1px solid
 }
+
+.card__footer {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.button {
+  margin: 0;
+  padding: 0.75em 1em;
+  text-transform: capitalize;
+  border-radius: 0.5em;
+
+  appearance: none;
+  outline: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.button:hover {
+  opacity: 0.7;
+}

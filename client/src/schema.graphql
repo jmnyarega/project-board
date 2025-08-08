@@ -32,7 +32,7 @@ type Mutation {
   createBoard(title: String!): Board
   deleteCard(id: String): Message
   moveCard(id: String, position: String): Message
-  updateBoard(id: ID!, title: String!): Board
+  editCard(id: String, name: String, content: String): Message
   deleteBoard(id: ID!): Message
 }
 
@@ -47,3 +47,5 @@ type Subscription {
     moveCards(cardIds: String): Message
     createCard: Card
     deleteCard(id: String): Message
+    editCard: Message
+}

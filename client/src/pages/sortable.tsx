@@ -35,7 +35,7 @@ const SortableApp = () => {
                 items={items}
                 strategy={verticalListSortingStrategy}
             >
-                {items.map(id => <SortableItem key={id} id={id} />)}
+                {items.map(id => <SortableItem key={id} id={id.toString()} />)}
             </SortableContext>
         </DndContext>
     );

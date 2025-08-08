@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './sortable-item';
+import { posix } from 'path';
 
 const MOVE_CARD_SUBSCRIPTION = gql`
   subscription {
@@ -17,6 +18,14 @@ const MOVE_CARD_SUBSCRIPTION = gql`
 const CREATE_CARD_SUBSCRIPTION = gql`
   subscription {
     createCard {
+      __typename
+    }
+  }
+`;
+
+const EDIT_CARD_SUBSCRIPTION = gql`
+  subscription {
+    editCard {
       __typename
     }
   }
@@ -65,6 +74,14 @@ const DELETE_CARD = gql`
   }
 `;
 
+const EDIT_CARD = gql`
+  mutation editCard($id: String, $name: String, $content: String) {
+    editCard(id: $id, name: $name, content: $content) {
+      __typename
+    }
+  }
+`;
+
 const MOVE_CARD = gql`
   mutation moveCard($id: String, $position: String) {
     moveCard(id: $id, position: $position) {
@@ -72,7 +89,6 @@ const MOVE_CARD = gql`
     }
   }
 `;
-
 
 type User = {
   name: string;
@@ -91,7 +107,7 @@ type Column = {
   Card: [Card]
 }
 type Board = {
-  id: String;
+  id: string;
   title: string;
   user: User;
   Column: [Column];
@@ -107,7 +123,9 @@ const BoardPage = () => {
 
   const [moveCard, { data: cards }] = useMutation(MOVE_CARD);
 
-  const [deleteCard, { data: deleteCards }] = useMutation(DELETE_CARD);
+  const [deleteCard, { data: deleteCardData }] = useMutation(DELETE_CARD);
+
+  const [editCard, { data: editCardData }] = useMutation(EDIT_CARD);
 
   const [addCard, { data: newCard }] = useMutation(CREATE_CARD);
 
@@ -131,6 +149,11 @@ const BoardPage = () => {
     onSubscriptionComplete() { console.info("DELETE_CARD_SUBSCRIPTION_COMPLETE") }
   });
 
+  useSubscription(EDIT_CARD_SUBSCRIPTION, {
+    onSubscriptionData(_) { fetchBoards() },
+    onSubscriptionComplete() { console.info("EDIT_CARD_SUBSCRIPTION_COMPLETE") }
+  });
+
   useEffect(() => { boards && setBoard(boards.board) }, [boards])
   useEffect(() => { cards && fetchBoards() }, [cards])
   useEffect(() => { fetchBoards() }, [])
@@ -138,6 +161,17 @@ const BoardPage = () => {
   const deleteCardHandler = (event: React.MouseEvent, id: string) => {
     event.preventDefault();
     deleteCard({ variables: { id } })
+  }
+
+  const editCardHandler = (event: React.MouseEvent, id: string) => {
+    event.preventDefault();
+    editCard({
+      variables: {
+        id,
+        name: "This is the new name",
+        content: "In addition to the attributes, listeners,transform and setNodeRef properties, which you should already be familiar with if you've used the useDraggable",
+      }
+    })
   }
 
   return (
@@ -178,9 +212,14 @@ const BoardPage = () => {
                             <li className='cards'>
                               <h3>{card.name}</h3>
                               <div>{card.content}</div>
-                              <button onClick={(event) => deleteCardHandler(event, card.id)}>
-                                Delete
-                              </button>
+                              <div className='card__footer'>
+                                <button className='button' onClick={(event) => editCardHandler(event, card.id)}>
+                                  edit
+                                </button>
+                                <button className='button' onClick={(event) => deleteCardHandler(event, card.id)}>
+                                  Delete
+                                </button>
+                              </div>
                             </li>
                           </SortableItem>
                         )}
