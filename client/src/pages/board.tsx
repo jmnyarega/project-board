@@ -144,52 +144,65 @@ const BoardPage = () => {
     <div className="boards">
       <h1>{board?.title}</h1>
       <ul className='board'>
-        {board?.Column?.map(column =>
-          <li key={column.id}>
-            <h2>{column.name}</h2>
-            <ul className='columns'>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={column.Card}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {[...column.Card].sort((a, b) => {
-                    if (a.position < b.position) {
-                      return -1;
-                    } else {
-                      return 0;
-                    }
-                  }).map(card =>
-                    <SortableItem key={card.id} id={`${column.id}:${card.id}`}>
-                      <li className='cards'>
-                        <h3>{card.name}</h3>
-                        <div>{card.content}</div>
-                        <button onClick={(event) => deleteCardHandler(event, card.id)}>
-                          Delete
-                        </button>
-                      </li>
-                    </SortableItem>
-                  )}
-                </SortableContext>
-              </DndContext>
-              <button onClick={() => addCard(
-                {
-                  variables: {
-                    name: "This is awkward",
-                    columnId: column.id,
-                    content: "This content test"
-                  }
-                }
-              )}>
-                Add Card
-              </button>
-            </ul>
-          </li>
-        )}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={board?.Column || []}
+            strategy={verticalListSortingStrategy}
+          >
+            {board?.Column?.map(column =>
+              <SortableItem key={column.id} id={`${column.id}:${column.id}`}>
+                <li key={column.id}>
+                  <h2>{column.name}</h2>
+                  <ul className='columns'>
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={column.Card}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {[...column.Card].sort((a, b) => {
+                          if (a.position < b.position) {
+                            return -1;
+                          } else {
+                            return 0;
+                          }
+                        }).map(card =>
+                          <SortableItem key={card.id} id={`${column.id}:${card.id}`}>
+                            <li className='cards'>
+                              <h3>{card.name}</h3>
+                              <div>{card.content}</div>
+                              <button onClick={(event) => deleteCardHandler(event, card.id)}>
+                                Delete
+                              </button>
+                            </li>
+                          </SortableItem>
+                        )}
+                      </SortableContext>
+                    </DndContext>
+                    <button onClick={() => addCard(
+                      {
+                        variables: {
+                          name: "This is awkward",
+                          columnId: column.id,
+                          content: "This content test"
+                        }
+                      }
+                    )}>
+                      Add Card
+                    </button>
+                  </ul>
+                </li>
+              </SortableItem>
+            )}
+          </SortableContext>
+        </DndContext>
       </ul>
     </div >
   );
