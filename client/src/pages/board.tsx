@@ -95,8 +95,7 @@ type Board = {
   title: string;
   user: User;
   Column: [Column];
-}
-  ;
+};
 
 const BoardPage = () => {
   const { id } = useParams();
@@ -113,43 +112,23 @@ const BoardPage = () => {
   const [addCard, { data: newCard }] = useMutation(CREATE_CARD);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      // @ts-ignore
-      activationConstraint: { delay: 100 }
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(PointerSensor, { activationConstraint: { delay: 100, distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
   useSubscription(MOVE_CARD_SUBSCRIPTION, {
-    onSubscriptionData(options) {
-      console.log("Listening", options)
-    },
-    onSubscriptionComplete() {
-      console.log("Complete");
-      fetchBoards();
-    }
+    onSubscriptionData(options) { console.log("Listening", options) },
+    onSubscriptionComplete() { fetchBoards() }
   });
 
   useSubscription(CREATE_CARD_SUBSCRIPTION, {
-    onSubscriptionData(options) {
-      console.log("Listening", options)
-    },
-    onSubscriptionComplete() {
-      console.log("Complete");
-      fetchBoards();
-    }
+    onSubscriptionData(options) { console.log("Listening", options) },
+    onSubscriptionComplete() { fetchBoards() }
   });
 
   useSubscription(DELETE_CARD_SUBSCRIPTION, {
-    onSubscriptionData(options) {
-      console.log("Listening", options)
-    },
-    onSubscriptionComplete() {
-      console.log("Complete");
-      fetchBoards();
-    }
+    onSubscriptionData(options) { console.log("Listening", options) },
+    onSubscriptionComplete() { fetchBoards() }
   });
 
   useEffect(() => { boards && setBoard(boards.board) }, [boards])
@@ -158,8 +137,6 @@ const BoardPage = () => {
 
   const deleteCardHandler = (event: React.MouseEvent, id: string) => {
     event.preventDefault();
-
-    console.log(id);
     deleteCard({ variables: { id } })
   }
 
